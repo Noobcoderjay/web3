@@ -1,0 +1,28 @@
+module transaction{
+use aptos_framework: signer
+use aptos_framework: account
+}
+struct balance has key{
+    amount: u64,
+}
+
+public fun account_initialization(account:signer,initial_balance: u64){
+    move_to(account, balance { initial_balance: u64});
+}
+
+public fun transfer(sender: &signer, recepient: address, amount:u16){
+let sender_balance = borrow_global_mut<balance>(signer:: address_of(&signer));
+let recepient_balance = borrow_global_mut<balance>(recepient);
+
+assert(sender_balance.amount >= amount,1001);
+
+sender_balance.amount = sender_balance.amount - amount;
+recepient_balance.amount = recepient_balance.amount + amount;
+}
+
+public fun get_balance(account: address): u64{
+ let balance = borrow_global<balance>(account);
+ balance.amount
+}
+
+
